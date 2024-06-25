@@ -1,0 +1,6 @@
+Comment,Designator,Footprint,LCSC
+H1,M5Unit_Screw_Hole,unit_mounting_hole,,,0,0
+J1,Conn_01x04,HY2.0-4P,,,0,0
+U1,M5StampS3,M5StampS3,,,0,0
+U2,HPDL-1414,HPDL-1414,,,0,0
+U3,HPDL-1414,HPDL-1414,,,0,0

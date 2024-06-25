@@ -1,0 +1,6 @@
+Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
+H1,M5Unit_Screw_Hole,unit_mounting_hole,135.636,-88.9,0.0,top
+J1,Conn_01x04,HY2.0-4P,140.208,-88.852,90.0,top
+U1,M5StampS3,M5StampS3,81.28,-88.9,-90.0,top
+U2,HPDL-1414,HPDL-1414,102.87,-88.9,0.0,top
+U3,HPDL-1414,HPDL-1414,120.65,-88.9,0.0,top
