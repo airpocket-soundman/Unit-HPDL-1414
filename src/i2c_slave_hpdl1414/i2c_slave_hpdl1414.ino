@@ -8,6 +8,7 @@
   #endif
 #endif
 
+#include <stdlib.h>
 #include <HPDL1414.h>
 #include "Wire.h"
 
@@ -34,7 +35,7 @@ const byte dataPins[7] = {PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6
 const byte addrPins[2] = {  PIN_A0, PIN_A0 };				                                  // 表示するセグメントのアドレス送信用ピン指定　: A0, A1
 const byte wrenPins[]  = {PIN_WR0, PIN_WR1};					                                // 書き込み開始信号送信用ピン指定 :WREN　※HPDL1414を2個使用（8桁表示）するためピンを2本指定。使用するHPDL1414毎にPIN一本追加。
 HPDL1414 hpdl(dataPins, addrPins, wrenPins, sizeof(wrenPins));                        //HPDLのインスタンス開始
-
+int delayTime = 500;
 
 uint32_t i = 0;
 
@@ -46,27 +47,74 @@ void onRequest() {
 
 
 void onReceive(int len) {
-  S3USBSerial.println("");
+  S3USBSerial.println("");  // 改行
   S3USBSerial.println("onReceive called");  // デバッグメッセージ
   S3USBSerial.printf("onReceive[%d]: ", len);
 
-  char buffer[32];  // 受信データを格納するバッファ
-  int index = 0;
+  char com[3] = {0};  // 2文字を格納するバッファ（+1は終端用）
+  char buffer[33] = {0};  // 残りのデータを格納するバッファ（+1は終端用）
+  int comIndex = 0;
+  int bufferIndex = 0;
+  int totalBytesRead = 0;
 
-  while (Wire.available() && index < sizeof(buffer) - 1) {
+  while (Wire.available()) {
     char c = Wire.read();
-    if (c >= 32 && c <= 126) {  // 表示可能なASCII文字のみをバッファに格納
-      buffer[index++] = c;
+    totalBytesRead++;
+    
+    if (totalBytesRead == 1) {
+      // 最初の1文字を捨てる
+      continue;
+    } else if (totalBytesRead >= 2 && totalBytesRead <= 3) {
+      // 2文字目から3文字目をcomに格納
+      if (c >= 32 && c <= 126) {  // 表示可能なASCII文字のみをバッファに格納
+        com[comIndex++] = c;
+      }
+    } else if (bufferIndex < sizeof(buffer) - 1) {
+      // 残りのデータをbufferに格納
+      if (c >= 32 && c <= 126) {  // 表示可能なASCII文字のみをバッファに格納
+        buffer[bufferIndex++] = c;
+      }
+    } else {
+      // バッファサイズを超えたデータを無視（必要に応じてデバッグ出力可能）
+      S3USBSerial.print("*");  // 超過データを視覚的に確認するためのデバッグ出力
     }
-    //S3USBSerial.write(c);  // デバッグ用にシリアルに出力
   }
-  buffer[index] = '\0';  // 文字列の終端を設定
 
+  //com[comIndex] = '\0';  // comバッファの終端を設定
+  //buffer[bufferIndex] = '\0';  // bufferバッファの終端を設定
 
-  //S3USBSerial.print("Received: ");
-  S3USBSerial.println(buffer);  // 受信した文字列を表示
-  //S3USBSerial.println("catch");
+  // 受信したデータを表示
+  S3USBSerial.print("Command: ");
+  S3USBSerial.println(com);
+  S3USBSerial.print("Data: ");
+  S3USBSerial.println(buffer);
+  
+  // comの内容に応じて関数を呼び出す
+  if (strcmp(com, "S:") == 0) {
+    scrollDisplay(buffer);
+  } else if (strcmp(com, "F:") == 0) {
+    fixedDisplay(buffer);
+  } else if (strcmp(com, "D:") == 0) {
+    setScrollDelay(buffer);
+  }
 }
+
+
+  void scrollDisplay(char buffer[33]){
+    S3USBSerial.print("scroll func Command: ");
+    S3USBSerial.println(buffer);
+  }
+
+  void fixedDisplay(char buffer[33]){
+    S3USBSerial.print("fix func Command: ");
+    S3USBSerial.println(buffer);
+  }
+
+  void setScrollDelay(char buffer[33]){
+    delayTime = atoi(buffer);
+    S3USBSerial.print("set delay func Command: ");
+    S3USBSerial.println(buffer);
+  }
 
 void setup() {
   S3USBSerial.begin(115200);
