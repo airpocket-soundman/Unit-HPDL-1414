@@ -858,7 +858,7 @@
 				)
 			)
 		)
-		(property "Value" ""
+		(property "Value" "M5Unit Screw Hole"
 			(at 0 0 0)
 			(effects
 				(font
