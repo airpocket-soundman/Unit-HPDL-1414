@@ -18,22 +18,25 @@
 #define I2C_DEV_ADDR 0x58
 
 //HPDL1414
-#define PIN_D0   1
-#define PIN_D1   3
-#define PIN_D2   5
-#define PIN_D3   7
+#define PIN_D0   7
+#define PIN_D1   5
+#define PIN_D2   3
+#define PIN_D3   1
 #define PIN_D4  43
-#define PIN_D5   9
-#define PIN_D6  46
+#define PIN_D5  46
+#define PIN_D6   9
 #define PIN_A0  40
 #define PIN_A1  41
 #define PIN_WR0 44      //1台目のHPDL1414のWRピンに接続するピン
 #define PIN_WR1 42      //2台目のHPDL1414のWRピンに接続するピン
-
+//const byte dataPins[7] = {7, 5, 3, 1, 43, 46, 9}; // Segment data pins: D0 - D6
+//const byte addrPins[2] = {40, 41};                // Segment address pins: A0, A1
+const byte wrenPins[]  = {44, 42};                // Write Enable pins (left to right)
 //HPDL-1414制御用
-const byte dataPins[7] = {PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6};	  // ASCIIコードデータ送信用ピン指定 : D0~D6
-const byte addrPins[2] = {  PIN_A0, PIN_A0 };				                                  // 表示するセグメントのアドレス送信用ピン指定　: A0, A1
-const byte wrenPins[]  = {PIN_WR0, PIN_WR1};					                                // 書き込み開始信号送信用ピン指定 :WREN　※HPDL1414を2個使用（8桁表示）するためピンを2本指定。使用するHPDL1414毎にPIN一本追加。
+//const byte dataPins[7] = {PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6};	  // ASCIIコードデータ送信用ピン指定 : D0~D6
+//const byte addrPins[2] = {  PIN_A0, PIN_A0 };				                                  // 表示するセグメントのアドレス送信用ピン指定　: A0, A1
+//const byte wrenPins[]  = {PIN_WR0, PIN_WR1};					                                // 書き込み開始信号送信用ピン指定 :WREN　※HPDL1414を2個使用（8桁表示）するためピンを2本指定。使用するHPDL1414毎にPIN一本追加。
+
 HPDL1414 hpdl(dataPins, addrPins, wrenPins, sizeof(wrenPins));                        //HPDLのインスタンス開始
 int delayTime = 500;
 
@@ -103,17 +106,20 @@ void onReceive(int len) {
   void scrollDisplay(char buffer[33]){
     S3USBSerial.print("scroll func Command: ");
     S3USBSerial.println(buffer);
+    hpdl.print(buffer);
   }
 
   void fixedDisplay(char buffer[33]){
     S3USBSerial.print("fix func Command: ");
     S3USBSerial.println(buffer);
+    hpdl.print(buffer);
   }
 
   void setScrollDelay(char buffer[33]){
     delayTime = atoi(buffer);
     S3USBSerial.print("set delay func Command: ");
     S3USBSerial.println(buffer);
+    hpdl.print(buffer);
   }
 
 void setup() {
@@ -123,7 +129,20 @@ void setup() {
   }
 
   //HDPL1414表示消去
-  hpdl.clear(); 
+  hpdl.begin();
+  hpdl.printOverflow(true);
+  hpdl.clear();
+  delay(1000);
+  hpdl.print("01234567");
+  delay(1000);
+  hpdl.clear();
+  delay(1000);
+  hpdl.print("01234567");
+  delay(1000);
+  hpdl.clear();
+  delay(1000);
+  hpdl.print("01234567");
+
   
   setupI2CSlaveDevice();
 }
