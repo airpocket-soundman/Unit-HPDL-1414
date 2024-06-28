@@ -1,4 +1,4 @@
-23647229637078702
+23648950026395947
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -96599,6 +96599,13 @@ HY2.0-4P
 0
 4
 4
+footprints
+LTP305G
+
+
+0
+13
+13
 footprints
 M5StampS3
 
