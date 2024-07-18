@@ -27,15 +27,15 @@
 #define PIN_D6   1
 #define PIN_A0  40
 #define PIN_A1  41
-#define PIN_WR0 42      //1台目のHPDL1414のWRピンに接続するピン
-#define PIN_WR1 44      //2台目のHPDL1414のWRピンに接続するピン
+#define PIN_WR0 44      //1台目のHPDL1414のWRピンに接続するピン
+#define PIN_WR1 42      //2台目のHPDL1414のWRピンに接続するピン
 //const byte dataPins[7] = {9, 7, 5, 3, 43, 46, 1}; // Segment data pins: D0 - D6
 //const byte addrPins[2] = {40, 41};                // Segment address pins: A0, A1
 //const byte wrenPins[]  = {42, 44};                // Write Enable pins (left to right)
 //HPDL-1414制御用
 const byte dataPins[7] = {PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6};	  // ASCIIコードデータ送信用ピン指定 : D0~D6
 const byte addrPins[2] = {PIN_A0, PIN_A1 };				                                  // 表示するセグメントのアドレス送信用ピン指定　: A0, A1
-const byte wrenPins[]  = {PIN_WR0, PIN_WR1};					                                // 書き込み開始信号送信用ピン指定 :WREN　※HPDL1414を2個使用（8桁表示）するためピンを2本指定。使用するHPDL1414毎にPIN一本追加。
+const byte wrenPins[2]  = {PIN_WR0, PIN_WR1};					                                // 書き込み開始信号送信用ピン指定 :WREN　※HPDL1414を2個使用（8桁表示）するためピンを2本指定。使用するHPDL1414毎にPIN一本追加。
 
 HPDL1414 hpdl(dataPins, addrPins, wrenPins, sizeof(wrenPins));                        //HPDLのインスタンス開始
 int delayTime = 500;
