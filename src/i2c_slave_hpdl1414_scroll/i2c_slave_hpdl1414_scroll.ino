@@ -12,6 +12,12 @@
 #include <HPDL1414.h>
 #include "Wire.h"
 
+#include <FastLED.h>
+
+#define PIN_LED    21   // 本体フルカラーLEDの使用端子（G21）
+#define NUM_LEDS   1    // 本体フルカラーLEDの数
+CRGB leds[NUM_LEDS];
+
 //I2C
 #define PIN_SDA 13
 #define PIN_SCL 15
@@ -134,14 +140,20 @@ void setScrollDelay(char buffer[33]){
 
 void setup() {
   S3USBSerial.begin(115200);
-  while (!S3USBSerial) {
-    ; // シリアルポートが利用可能になるまで待機
-  }
+  //while (!S3USBSerial) {
+  //  ; // シリアルポートが利用可能になるまで待機
+  //}
+
+  FastLED.addLeds<WS2812B, PIN_LED, GRB>(leds, NUM_LEDS);
+  leds[0] = CRGB(40, 40, 40);   // 白色（赤, 緑, 青）※3色それぞれの明るさを0〜255で指定
+
 
   //HDPL1414表示消去
   hpdl.begin();
   hpdl.printOverflow(true);
   hpdl.clear();
+
+  /*
   delay(1000);
   hpdl.print("0123456789");
   delay(1000);
@@ -158,16 +170,29 @@ void setup() {
   hpdl.print("FFFFFFFF123");
   delay(1000);
   hpdl.clear();
-
+  */
   
-
+  
   printScrollingText(hpdl, text, displayLength, delayTime);
   setupI2CSlaveDevice();
+  
 }
 
 void loop() {
   S3USBSerial.print(".");
-  delay(1000);
+  //delay(1000);
+
+  /*
+  leds[0] = CRGB::Red;
+  FastLED.show();
+  delay(500);
+  leds[0] = CRGB::Black;
+  FastLED.show();
+  delay(500);
+  leds[0] = CRGB(40, 40, 40);
+  FastLED.show();
+  delay(500);
+  */
 }
 
 void setupI2CSlaveDevice(){
