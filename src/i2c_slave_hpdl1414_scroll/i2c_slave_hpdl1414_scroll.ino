@@ -112,7 +112,7 @@ void onReceive(int len) {
   }
 }
 
-void scrollDisplay(char buffer[33]){
+void scrollDisplay(char buffer[129]){
   S3USBSerial.print("scroll func Command: ");
   S3USBSerial.println(buffer);
   hpdl.clear();
